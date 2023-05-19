@@ -16,7 +16,7 @@ import {
 } from "react-native";
 
 export default function RegistrationScreen() {
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [textEntry, setTextEntry] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +31,7 @@ export default function RegistrationScreen() {
   };
 
   const onShowPass = () => {    
-    setSecureTextEntry(!secureTextEntry);
+    setTextEntry(!textEntry);
   };
 
   return (
@@ -65,7 +65,7 @@ export default function RegistrationScreen() {
                     value={password}
                     onChangeText={passwordHandler}
                     placeholder="Пароль"
-                    secureTextEntry={secureTextEntry}
+                    secureTextEntry={textEntry}
                     style={styles.input}
                   />
                   <TouchableOpacity style={styles.navigate__btn} onPress={onShowPass}>
