@@ -1,187 +1,210 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
-  View,
-  TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-  Button,
-  ImageBackground,
   Image,
+  KeyboardAvoidingView,
+  Pressable,
+  StyleSheet,
   Text,
-  TouchableOpacity,
+  TextInput,
+  View,
 } from "react-native";
+import Add from "../assets/AddPhoto.svg";
+import Del from "../assets/del.svg";
 
-export default function RegistrationScreen() {
-  const [textEntry, setTextEntry] = useState(true);
-  const [name, setName] = useState("");
+export const RegistrationScreen = () => {
+  const [passwordView, setPasswordView] = useState(true);
+  const [avatarSource, setAvatarSource] = useState(null);
+  const [inputFocus, setInputFocus] = useState({});
+
+  const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const nameHandler = (text) => setName(text);
-  const emailHandler = (text) => setEmail(text);
-  const passwordHandler = (text) => setPassword(text);
-
-  const onLogin = () => {
-    Alert.alert("Credentials", `${name} + ${email} +${password}`);
-    console.log("Credentials", `${name} + ${email} +${password}`);
+  const handlePress = () => {
+    setPasswordView(!passwordView);
   };
 
-  const onShowPass = () => {    
-    setTextEntry(!textEntry);
+  const addImg = () => {};
+  const delImg = () => {
+    setAvatarSource(null);
+  };
+
+  const handleFocus = (inputName) => {
+    setInputFocus((prevFocus) => ({ ...prevFocus, [inputName]: true }));
+  };
+
+  const handleBlur = (inputName) => {
+    setInputFocus((prevFocus) => ({ ...prevFocus, [inputName]: false }));
+  };
+
+  const onLogin = () => {
+    console.log("Login:", login, "Email:", email, "Password:", password);
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <ImageBackground  style={styles.imgBgr} source={require('../assets/background.png')}>
-            <KeyboardAvoidingView
-              behavior={Platform.OS == "ios" ? "padding" : "height"}
-            >
-             <View style={styles.form}>
-              <View style={styles.img__container}>
-                <TouchableOpacity>
-                  <ImageBackground  style={styles.imgAddBtn} source={require('../assets/add.png')}/>
-                </TouchableOpacity>                
-              </View> 
-                <Text style={styles.title}>Реєстрація</Text>
-                <TextInput
-                  value={name}
-                  onChangeText={nameHandler}
-                  placeholder="Логін"
-                  style={styles.input}
-                />
-                  <TextInput
-                    value={email}
-                    onChangeText={emailHandler}
-                    placeholder="Адреса електронної пошти"
-                    style={styles.input}
-                  /> 
-                <View style={styles.password__container}>                            
-                  <TextInput
-                    value={password}
-                    onChangeText={passwordHandler}
-                    placeholder="Пароль"
-                    secureTextEntry={textEntry}
-                    style={styles.input}
-                  />
-                  <TouchableOpacity style={styles.navigate__btn} onPress={onShowPass}>
-                    <Text style={styles.showBtn}>Показати</Text>
-                  </TouchableOpacity> 
-                </View>                                            
-                <TouchableOpacity style={styles.register__btn} onPress={onLogin}>
-                    <Text style={styles.register__textBtn} >Зареєструватися</Text>
-                </TouchableOpacity> 
-                <TouchableOpacity style={styles.navigate__btn}>
-                  <Text style={styles.navigate__textBtn} >Вже є аккаунт? Війти</Text>
-                </TouchableOpacity>                                                       
-              </View>
-            </KeyboardAvoidingView>
-        </ImageBackground>
+    <View style={styles.container}>
+      <View style={styles.avatarContainer}>
+        <Image source={{ uri: avatarSource }} style={styles.avatar} />
+        {avatarSource ? (
+          <Pressable onPress={delImg} style={styles.imgIcon}>
+            <Del />
+          </Pressable>
+        ) : (
+          <Pressable onPress={addImg} style={styles.imgIcon}>
+            <Add />
+          </Pressable>
+        )}
       </View>
-    </TouchableWithoutFeedback>
-  );
-}
 
+      <Text style={styles.title}>Реєстрація</Text>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+        <TextInput
+          placeholderTextColor="#BDBDBD"
+          placeholder="Логін"
+          value={login}
+          onChangeText={setLogin}
+          style={[styles.input, inputFocus["input1"] && styles.inputFocused]}
+          onFocus={() => handleFocus("input1")}
+          onBlur={() => handleBlur("input1")}
+        />
+        <TextInput
+          placeholderTextColor="#BDBDBD"
+          placeholder="Електронна адреса"
+          value={email}
+          onChangeText={setEmail}
+          style={[styles.input, inputFocus["input2"] && styles.inputFocused]}
+          onFocus={() => handleFocus("input2")}
+          onBlur={() => handleBlur("input2")}
+        />
+
+        <View style={{ position: "relative" }}>
+          <TextInput
+            autoComplete="password"
+            secureTextEntry={passwordView}
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Пароль"
+            style={[styles.input, inputFocus["input3"] && styles.inputFocused]}
+            onFocus={() => handleFocus("input3")}
+            onBlur={() => handleBlur("input3")}
+          />
+
+          <Text
+            style={styles.passwordView}
+            dataDetectorType="link"
+            onPress={handlePress}
+          >
+            Показати
+          </Text>
+        </View>
+      </KeyboardAvoidingView>
+      <Pressable style={styles.button} onPress={onLogin}>
+        <Text style={styles.textButton}>Зареєструватися</Text>
+      </Pressable>
+
+      <Text style={styles.link} dataDetectorType="link">
+        Вже є акаунт?Увійти
+      </Text>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: "center",
-  },
-  img__container: {
     position: "relative",
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginTop: -60,
-    width: 120,
-    height: 120,
-    backgroundColor: "#F6F6F6",
-    borderRadius: 16,
+    flex: 0.67,
+    alignItems: "center",
+    // gap: 16,
+
+    paddingTop: 92,
+    borderTopStartRadius: 25,
+    borderTopEndRadius: 25,
+
+    backgroundColor: "#FFFFFF",
   },
-  img: {
-    width: 120,
-    height: 120,
-    borderRadius: 16, 
+  avatarContainer: {
+    position: "relative",
   },
-  imgAddBtn: {
+  avatar: {
     position: "absolute",
-    top: 80,
-    right: -13,    
+    top: -160,
+    left: -60,
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+    backgroundColor: "#F6F6F6",
+    // display:'none'
+  },
+  imgIcon: {
+    position: "absolute",
+
+    top: -80,
+    left: 45,
     width: 25,
     height: 25,
   },
-  input: {   
-    width: 343,
-    height: 44,
-    padding: 10,
-    borderWidth: 1,
-    backgroundColor: "#F6F6F6",
-    borderColor: "#E8E8E8",
-    borderRadius: 8,
-    marginBottom: 16,
-    marginLeft: "auto",
-    marginRight: "auto",
-  }, 
-  password__container: {
-    position: "relative",
-  },
-  showBtn: {
-    position: "absolute",
-    bottom: 27,
-    left: 100,
-    color: "#1B4371",
-    textAlign: "center",  
-    textTransform: "capitalize",  
-  },
-  title: {    
+  title: {
+    fontFamily: "Roboto-Medium",
     fontSize: 30,
-    fontWeight: 500,   
-    letterSpacing: 0.01,  
-    marginTop: 32,
+    color: "#212121",
     marginBottom: 32,
-    textAlign: "center",
-  }, 
-  imgBgr: {
-    width: 375,
-    height: 812,
   },
-  form: {
-    marginTop: 263,       
-    backgroundColor: "#ffffff",
-    borderRadius: 25,
-    height: 549,
-  },
-  register__btn: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginTop: 43,
-    marginBottom: 16,  
-    width: 343,
-    height: 51,
-    backgroundColor: "#FF6C00",
-    borderRadius: 100,    
-  },
- 
-  register__textBtn: {
+  input: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    backgroundColor: "#F6F6F6",
+    color: "#212121",
+    marginHorizontal: 16,
+    marginBottom: 16,
     paddingTop: 16,
-    paddingBottom: 16,
-    color: "#FFFFFF",
-    textAlign: "center",  
-    textTransform: "capitalize",  
+    paddingBottom: 15,
+    paddingHorizontal: 16,
+    height: 50,
+    width: 343,
+    borderColor: "#E8E8E8",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: 8,
   },
-  navigate__btn: {
-    marginLeft: "auto",
-    marginRight: "auto", 
-    backgroundColor: "#FFFFFF",  
+  inputFocused: {
+    borderColor: "#FF6C00",
+    backgroundColor: "#FFFFFF",
+    borderWidth: 1,
   },
-  navigate__textBtn: {
+  passwordView: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+
+    position: "absolute",
+    top: 13,
+    left: 270,
+
+    fontSize: 16,
     color: "#1B4371",
-    textAlign: "center",  
-    textTransform: "capitalize",  
+  },
+  button: {
+    backgroundColor: "#FF6C00",
+    width: 343,
+    marginTop: 27,
+    marginBottom: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 100,
+  },
+  textButton: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+
+    textAlign: "center",
+    color: "#FFFFFF",
+  },
+  link: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+
+    color: "#1B4371",
   },
 });

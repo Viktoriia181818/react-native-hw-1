@@ -1,153 +1,153 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
   View,
-  TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-  Button,
-  ImageBackground,
-  Image,
   Text,
-  TouchableOpacity,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  KeyboardAvoidingView,
 } from "react-native";
 
-export default function LoginScreen() { 
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
+export const LoginScreen = () => {
+  const [passwordView, setPasswordView] = useState(true);
+  const [inputFocus, setInputFocus] = useState({});
 
-  const emailHandler = (text) => setEmail(text);
-  const passwordHandler = (text) => setPassword(text);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handlePress = () => {
+    setPasswordView(!passwordView);
+  };
+
+  const handleFocus = (inputName) => {
+    setInputFocus((prevFocus) => ({ ...prevFocus, [inputName]: true }));
+  };
+
+  const handleBlur = (inputName) => {
+    setInputFocus((prevFocus) => ({ ...prevFocus, [inputName]: false }));
+  };
 
   const onLogin = () => {
-    Alert.alert("Credentials", `${email} +${password}`);
-    console.log("Credentials", `${email} +${password}`);
-  };
-  const onShowPass = () => {    
-    setSecureTextEntry(!secureTextEntry);
+    console.log("Email:", email, "Password:", password);
   };
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <ImageBackground  style={styles.imgBgr} source={require('../assets/background.png')}>
-            <KeyboardAvoidingView
-              behavior={Platform.OS == "ios" && "padding"}
-            >
-             <View style={styles.form}>
-                  <Text style={styles.title}>Увійти</Text>
-                  <TextInput
-                    value={email}
-                    onChangeText={emailHandler}
-                    placeholder="Адреса електронної пошти"
-                    style={styles.input}
-                  /> 
-                <View style={styles.password__container}>                            
-                  <TextInput
-                    value={password}
-                    onChangeText={passwordHandler}
-                    placeholder="Пароль"
-                    secureTextEntry={secureTextEntry}
-                    style={styles.input}
-                  />
-                  <TouchableOpacity style={styles.navigate__btn} onPress={onShowPass}>
-                    <Text style={styles.showBtn}>Показати</Text>
-                  </TouchableOpacity> 
-                </View>                                            
-                <TouchableOpacity style={styles.register__btn} onPress={onLogin}>
-                    <Text style={styles.register__textBtn} >Увійти</Text>
-                </TouchableOpacity> 
-                <TouchableOpacity style={styles.navigate__btn}>
-                  <Text style={styles.navigate__textBtn} >Немає аккаунта? Зареєструватися</Text>
-                </TouchableOpacity>                                                       
-              </View>
-            </KeyboardAvoidingView>
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+    <View style={styles.container}>
+      <Text style={styles.title}>Увійти</Text>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS == "ios" ? "padding" : "height"}
+      >
+        <TextInput
+          style={[styles.input, inputFocus["input1"] && styles.inputFocused]}
+          onFocus={() => handleFocus("input1")}
+          onBlur={() => handleBlur("input1")}
+          placeholderTextColor="#BDBDBD"
+          placeholder="Адреса електронної пошти"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <View style={{ position: "relative" }}>
+          <TextInput
+            style={[styles.input, inputFocus["input2"] && styles.inputFocused]}
+            onFocus={() => handleFocus("input2")}
+            onBlur={() => handleBlur("input2")}
+            autoComplete="password"
+            secureTextEntry={passwordView}
+            placeholder="Пароль"
+            placeholderTextColor="#BDBDBD"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Text
+            style={styles.passwordView}
+            dataDetectorType="link"
+            onPress={handlePress}
+          >
+            Показати
+          </Text>
+        </View>
+      </KeyboardAvoidingView>
+      <Pressable style={styles.button} onPress={onLogin}>
+        <Text style={styles.textButton}>Увійти</Text>
+      </Pressable>
+
+      <Text style={styles.link} dataDetectorType="link">
+        Немає акаунта? Зареєструватися
+      </Text>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: "center",
-  },
-  img: {
-    width: 120,
-    height: 120,
-    borderRadius: 16, 
-  },
-  input: {   
-    width: 343,
-    height: 44,
-    padding: 10,
-    borderWidth: 1,
-    backgroundColor: "#F6F6F6",
-    borderColor: "#E8E8E8",
-    borderRadius: 8,
-    marginBottom: 16,
-    marginLeft: "auto",
-    marginRight: "auto",
-  }, 
-  password__container: {
     position: "relative",
+    flex: 0.6,
+    alignItems: "center",
+    // gap: 16,
+
+    paddingTop: 32,
+    borderTopStartRadius: 25,
+    borderTopEndRadius: 25,
+
+    backgroundColor: "#FFFFFF",
   },
-  showBtn: {
-    position: "absolute",
-    bottom: 27,
-    left: 100,
-    color: "#1B4371",
-    textAlign: "center",  
-    textTransform: "capitalize",  
-  },
-  title: {    
+
+  title: {
+    fontFamily: "Roboto-Medium",
     fontSize: 30,
-    fontWeight: 500,   
-    letterSpacing: 0.01,  
-    marginTop: 32,
+    color: "#212121",
     marginBottom: 32,
-    textAlign: "center",
-  }, 
-  imgBgr: {
-    width: 375,
-    height: 812,
   },
-  form: {
-    marginTop: 323,       
-    backgroundColor: "#ffffff",
-    borderRadius: 25,
-    height: 489,
-  },
-  register__btn: {
-    marginLeft: "auto",
-    marginRight: "auto",
-    marginTop: 43,
-    marginBottom: 16,  
-    width: 343,
-    height: 51,
-    backgroundColor: "#FF6C00",
-    borderRadius: 100,    
-  }, 
-  register__textBtn: {
+  input: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    color: "#212121",
+
+    backgroundColor: "#F6F6F6",
+    marginBottom: 16,
+    marginHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 16,
-    color: "#FFFFFF",
-    textAlign: "center",  
-    textTransform: "capitalize",  
+    paddingBottom: 15,
+    paddingHorizontal: 16,
+    height: 50,
+    width: 343,
+    borderColor: "#E8E8E8",
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderRadius: 8,
   },
-  navigate__btn: {
-    marginLeft: "auto",
-    marginRight: "auto", 
-    backgroundColor: "#FFFFFF",  
+  inputFocused: {
+    borderColor: "#FF6C00",
+    borderWidth: 1,
   },
-  navigate__textBtn: {
+  passwordView: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
     color: "#1B4371",
-    textAlign: "center",  
-    textTransform: "capitalize",  
+
+    position: "absolute",
+
+    top: 13,
+    left: 270,
+  },
+  button: {
+    backgroundColor: "#FF6C00",
+    width: 343,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 100,
+  },
+  textButton: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+
+    textAlign: "center",
+    color: "#FFFFFF",
+  },
+  link: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 16,
+    color: "#1B4371",
+    marginTop: 16,
   },
 });
