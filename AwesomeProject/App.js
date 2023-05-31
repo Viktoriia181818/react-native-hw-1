@@ -8,15 +8,16 @@ import {
    TouchableWithoutFeedback,
    View,
 } from 'react-native';
-
+import { RegistrationScreen } from './Screens/RegistrationScreen/RegistrationScreen';
+import { LoginScreen } from './Screens/LoginScreen/LoginScreen';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { LoginScreen } from './Screens/LoginScreen';
-import { RegistrationScreen } from './Screens/RegistrationScreen';
-import { Home } from './Screens/Home';
-import { MapScreen } from './Screens/MapScreen';
-
+import { Home } from './Screens/Home/Home';
+import { MapScreen } from './Screens/MapScreen/MapScreen';
+import { Provider } from 'react-redux';
+import  store from './redux/store';
+import { ProfilePhotoScreen } from './Screens/ProfilePhotoScreen/ProfilePhotoScreen';
 
 const MainStack = createStackNavigator();
 
@@ -31,21 +32,24 @@ export default function App() {
    }
 
    return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-         <View style={styles.container}>
-            <NavigationContainer>
-               <MainStack.Navigator
-                  initialRouteName="Registration"
-                  screenOptions={{ headerShown: false }}
-               >
-                  <MainStack.Screen name="Login" component={LoginScreen} />
-                  <MainStack.Screen name="Registration" component={RegistrationScreen} />
-                  <MainStack.Screen name="Home" component={Home} />
-                  <MainStack.Screen name="MapScreen" component={MapScreen} />
-               </MainStack.Navigator>
-            </NavigationContainer>
-         </View>
-      </TouchableWithoutFeedback>
+      <Provider store={store}>
+         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+               <NavigationContainer>
+                  <MainStack.Navigator
+                     initialRouteName="Registration"
+                     screenOptions={{ headerShown: false }}
+                  >
+                     <MainStack.Screen name="Login" component={LoginScreen} />
+                     <MainStack.Screen name="Registration" component={RegistrationScreen} />
+                     <MainStack.Screen name="Home" component={Home} />
+                     <MainStack.Screen name="MapScreen" component={MapScreen} />
+                     <MainStack.Screen name='ProfilePhotoScreen' component = { ProfilePhotoScreen } />
+                  </MainStack.Navigator>
+               </NavigationContainer>
+            </View>
+         </TouchableWithoutFeedback>
+      </Provider>
    );
 }
 
